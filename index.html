@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Morning Transport</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f9f7ff;
+      padding: 20px;
+      color: #333;
+    }
+
+    h2 {
+      text-align: center;
+      color: #6a5acd;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      max-width: 400px;
+      margin: auto;
+    }
+
+    label {
+      font-size: 14px;
+      color: #777;
+    }
+
+    select, input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      margin-top: 6px;
+      margin-bottom: 16px;
+      border-radius: 12px;
+      border: 1px solid #ddd;
+      font-size: 16px;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      margin: 10px 0 20px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 16px;
+      border-radius: 16px;
+      border: none;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .bus {
+      background: #e0f7fa;
+    }
+
+    .car {
+      background: #ffe4ec;
+    }
+
+    .selected {
+      outline: 3px solid #6a5acd;
+      transform: scale(1.05);
+    }
+
+    .toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f3f0ff;
+      padding: 12px;
+      border-radius: 12px;
+      margin-bottom: 16px;
+    }
+
+    .submit {
+      width: 100%;
+      padding: 16px;
+      background: #6a5acd;
+      color: white;
+      border: none;
+      border-radius: 16px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .status {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 14px;
+      color: #6a5acd;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="card">
+
+  <h2>🌤 Morning Plan</h2>
+
+  <label>Name</label>
+  <select id="name">
+    <option>Girl A</option>
+    <option>Girl B</option>
+  </select>
+
+  <label>How are you going?</label>
+  <div class="btn-group">
+    <button class="btn bus" id="busBtn" onclick="setTransport('Bus')">🚍 Bus</button>
+    <button class="btn car" id="carBtn" onclick="setTransport('Car')">🚗 Car</button>
+  </div>
+
+  <div class="toggle">
+    <span>🏠 Home-Based Learning</span>
+    <input type="checkbox" id="hbl">
+  </div>
+
+  <label>Remarks (optional)</label>
+  <input type="text" id="remarks" placeholder="e.g. raining, exam day">
+
+  <button class="submit" onclick="submitData()">Submit</button>
+
+  <div class="status" id="status"></div>
+
+</div>
+
+<script>
+let transport = "";
+
+function setTransport(t) {
+  transport = t;
+
+  document.getElementById("busBtn").classList.remove("selected");
+  document.getElementById("carBtn").classList.remove("selected");
+
+  if (t === "Bus") {
+    document.getElementById("busBtn").classList.add("selected");
+  } else {
+    document.getElementById("carBtn").classList.add("selected");
+  }
+}
+
+function submitData() {
+  if (!transport) {
+    document.getElementById("status").innerText = "Please select Bus or Car!";
+    return;
+  }
+
+  const data = {
+    date: new Date().toISOString().split("T")[0],
+    name: document.getElementById("name").value,
+    transport: transport,
+    hbl: document.getElementById("hbl").checked,
+    remarks: document.getElementById("remarks").value
+  };
+
+  fetch("https://script.google.com/macros/s/AKfycbxGA_0JkZB7-kPVztyozPn31A-e0FipzET2MYa6_D5BpDF6sdOjDGAOuxfWD96MQcrMKA/exec", {
+    method: "POST",
+    body: JSON.stringify(data)
+  })
+  .then(res => res.json())
+  .then(() => {
+    document.getElementById("status").innerText = "✅ Submitted!";
+    
+    // Reset
+    transport = "";
+    document.getElementById("busBtn").classList.remove("selected");
+    document.getElementById("carBtn").classList.remove("selected");
+    document.getElementById("remarks").value = "";
+    document.getElementById("hbl").checked = false;
+  })
+  .catch(() => {
+    document.getElementById("status").innerText = "❌ Error, try again";
+  });
+}
+</script>
+
+</body>
+</html>
