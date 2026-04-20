@@ -108,9 +108,10 @@
   <h2>🌤 Morning Plan</h2>
 
   <label>Name</label>
-  <select id="name">
-    <option>Tze Yu</option>
-    <option>Tze Qi</option>
+  <select id="name" onchange="saveName()">
+<option value = ""> Select your name </option>option>
+    <option value = "Tze Yu"> Tze Yu</option>
+    <option value = "Tze Qi"> Tze Qi</option>
   </select>
 
   <label>How are you going?</label>
@@ -170,7 +171,8 @@ function submitData() {
   .then(res => res.json())
   .then(() => {
     document.getElementById("status").innerText = "✅ Submitted!";
-    
+
+
     // Reset
     transport = "";
     document.getElementById("busBtn").classList.remove("selected");
@@ -182,6 +184,21 @@ function submitData() {
     document.getElementById("status").innerText = "❌ Error, try again";
   });
 }
+// Load saved name on page load
+window.onload = function() {
+  const savedName = localStorage.getItem("studentName");
+  if (savedName) {
+    document.getElementById("name").value = savedName;
+  }
+};
+
+// Save name when selected
+function saveName() {
+  const name = document.getElementById("name").value;
+  localStorage.setItem("studentName", name);
+}
+
+
 </script>
 
 </body>
